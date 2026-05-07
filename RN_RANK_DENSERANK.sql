@@ -15,63 +15,64 @@ INSERT INTO emp_analytics VALUES (6, 'John', 30, 45000, DATE '2022-08-25');
 COMMIT;
 
 -- ROW_NUMBER - Top employee per department
--- SELECT *
--- FROM (
---     SELECT emp_name, dept_id, salary,
---            ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
---     FROM emp_analytics
--- )
--- WHERE rn = 1;
+SELECT *
+FROM (
+    SELECT emp_name, dept_id, salary,
+           ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
+    FROM emp_analytics
+)
+WHERE rn = 1;
 
  --RANK - Top 2 employees per department (handles ties)
--- SELECT *
--- FROM (
---     SELECT emp_name, dept_id, salary,
---            RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk
---     FROM emp_analytics
--- )
--- WHERE rnk <= 2;
+SELECT *
+FROM (
+    SELECT emp_name, dept_id, salary,
+           RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk
+    FROM emp_analytics
+)
+WHERE rnk <= 2;
 
 --DENSE_RANK - Unique ranking per department
--- SELECT emp_name, dept_id, salary,
---        DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS drnk
--- FROM emp_analytics;
+SELECT emp_name, dept_id, salary,
+       DENSE_RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS drnk
+FROM emp_analytics;
 
----LEAD - Next employee salary within same department
--- SELECT emp_name, dept_id, salary,
---        LEAD(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS next_salary
--- FROM emp_analytics;
+-LEAD - Next employee salary within same department
+SELECT emp_name, dept_id, salary,
+       LEAD(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS next_salary
+FROM emp_analytics;
 
 
 
 --LAG - Previous employee salary within same department
--- SELECT emp_name, dept_id, salary,
---        LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS prev_salary
--- FROM emp_analytics;
+SELECT emp_name, dept_id, salary,
+       LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS prev_salary
+FROM emp_analytics;
 
 --Salary difference with previous employee (real-time scenario)
--- SELECT emp_name, dept_id, salary,
---        salary - LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS salary_diff
--- FROM emp_analytics;
+SELECT emp_name, dept_id, salary,
+       salary - LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS salary_diff
+FROM emp_analytics;
 
  ---Compare current salary with next salary
--- SELECT emp_name, dept_id, salary,
---        LEAD(salary) OVER (PARTITION BY dept_id ORDER BY salary) - salary AS next_diff
--- FROM emp_analytics;
+SELECT emp_name, dept_id, salary,
+       LEAD(salary) OVER (PARTITION BY dept_id ORDER BY salary) - salary AS next_diff
+FROM emp_analytics;
+
 --Find lowest salary employee per department
--- SELECT *
--- FROM (
---     SELECT emp_name, dept_id, salary,
---            ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary ASC) AS rn
---     FROM emp_analytics
--- )
--- WHERE rn = 1;
+SELECT *
+FROM (
+    SELECT emp_name, dept_id, salary,
+           ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary ASC) AS rn
+    FROM emp_analytics
+)
+WHERE rn = 1;
 
 --Employees earning more than previous employee
--- SELECT emp_name, dept_id, salary,
---        LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS prev_salary
--- FROM emp_analytics
--- WHERE salary > LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary);
+SELECT emp_name, dept_id, salary,
+       LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary) AS prev_salary
+FROM emp_analytics
+WHERE salary > LAG(salary) OVER (PARTITION BY dept_id ORDER BY salary);
 
  --Second highest salary per department
 SELECT *
